@@ -1,0 +1,6 @@
+{
+  "name": "Funeral Assurance Analytics",
+  "description": "Interactive data analytics suite and AI assistant for KwaZulu-Natal funeral assurance books, featuring interactive query-execution and metrics reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
