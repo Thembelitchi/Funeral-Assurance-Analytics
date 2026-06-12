@@ -4,38 +4,6 @@ This guide is compiled for enterprise Group Risk Managers, ICT Directors, and Da
 
 Currently, this application runs on a high-performance in-memory and local SQLite star-schema representation populated with simulated actuary-approved records (8,000 policies across KwaZulu-Natal). This document provides step-by-step technical blueprints to map and route live operational databases to the visual analytics, text-to-SQL translator, and graph-theoretic forensic engine.
 
-## 🖼️ Visual Tour & System Screenshots
-
-To assist visual inspection and illustrate the advanced forensic workflows, these are the system screens provided as part of the operational portal. If hosting on a public or private repository (e.g., GitHub Core Repo), save your uploaded screenshots under the `/assets/` directory named exactly as indicated below to display them beautifully in your repository:
-
-### 1. Actuarial Executive Dashboard (`assets/dashboard_overview.png`)
-*An all-in-one diagnostic view tracking major KZN key performance indicators (KPIs) in high fidelity.*
-*   **Strategic Metrics**: Highlights **6,581 Active Policies**, **R29.7m Annualized Premium In-Force**, and **82.8% Book Persistency** using deep charcoal off-white typography pairings.
-*   **Segmented Control Navigation**: Side-panel tabs direct users smoothly from text-to-SQL playgrounds to active fraud graph forensic states.
-*   *File naming*: Save this screenshot as `/assets/dashboard_overview.png` in your repository.
-<!-- ![Dashboard Overview](assets/dashboard_overview.png) -->
-
-### 2. KZN Operations & Product Lapse Analysis (`assets/kzn_operations.png`)
-*Detailed insights flagging high-risk areas and regional exposure.*
-*   **Concentration Warn Guard**: Calls out the critical **Community Group Lapses** rate of **15.2%** (representing **3.7x worst** than portfolio baseline averages) with **R1.7m Annualized Premium** representing revenue at risk.
-*   **Interactive Choropleth Analytics**: Maps regional metric spreads tracking policy densities in eThekwini Metro, Amajuba, and iLembe districts.
-*   *File naming*: Save this screenshot as `/assets/kzn_operations.png` in your repository.
-<!-- ![KZN Operations](assets/kzn_operations.png) -->
-
-### 3. Interactive Collusive Fraud Graph (`assets/fraud_graph.png`)
-*Real-time interactive D3-force network plotting complex syndicate relationships.*
-*   **Suspect Clusters**: Classifies and visualizes fraud rings like the *Durban Medical Certification Ring* and *KwaMashu Nedbank Mule Circle*.
-*   **Multi-hop Forensic Canvas**: Employs interactive node-link relationships representing Doctors, Bank Accounts, Claims, and Agents with drag-forces for deep investigation.
-*   *File naming*: Save this screenshot as `/assets/fraud_graph.png` in your repository.
-<!-- ![Interactive Fraud Graph](assets/fraud_graph.png) -->
-
-### 4. Graph Forensic Intelligence Board (`assets/graph_report.png`)
-*AI-summarized pattern breakdowns accompanied by actual Cypher matching logic.*
-*   **Cognitive Insight Synthesis**: Automatic generation matching the exact attack vector details on multi-party graph networks.
-*   **Instant Query Translation**: Live Cypher script outputs ready to copy and run inside a Neo4j enterprise terminal.
-*   *File naming*: Save this screenshot as `/assets/graph_report.png` in your repository.
-<!-- ![Graph Report Details](assets/graph_report.png) -->
-
 ---
 
 ## 🗺️ Architectural Topology & Star Schema
