@@ -6,6 +6,27 @@ Currently, this application runs on a high-performance in-memory and local SQLit
 
 ---
 
+## 📁 Codebase Layout & Multi-Language Blueprint Stack
+
+This repository serves as a fully integrated, multi-language enterprise ecosystem. It packages the web visualization analytics layer, the backend translation models, and direct production blueprints for ETL automation, procedural SQL automation triggers, and forensic graph queries:
+
+```text
+├── server.ts                       # Full-Stack Express/Vite server hosting the Gemini SQL translator & analytical routes
+├── src/                            # React & TypeScript visual telemetry web application source
+│   ├── main.tsx                    # Web interface entry mounting bootstrap
+│   ├── App.tsx                     # Integrated analytics dashboard, prompt workspace & forensic panels
+│   └── components/                 # Modulated interface components
+│       └── FraudGraph.tsx          # Interactive D3-powered graph network forensic stage 
+├── scripts/                        # Production operational blueprints:
+│   ├── sync_records_to_graph.py    # Python ETL Pipeline: Automates data streams from PostgreSQL to Neo4j
+│   ├── schema_triggers.sql         # PL/pgSQL database automation: Automatic 90-day grace-period grace / lapse enforcer
+│   └── forensic_patterns.cypher    # Neo4j Cypher queries: Ready-to-execute criminal cluster matching templates
+├── package.json                    # Application build specifications and Node dependencies configurations
+└── metadata.json                   # Web app metadata configurations
+```
+
+---
+
 ## 🗺️ Architectural Topology & Star Schema
 
 The visual telemetry, executive briefing, and translation models read from an optimized Dimensional Model (Star Schema) representing premium cycles and lapse behaviors. Below is the structural schema of the tables as populated in the warehouse:
