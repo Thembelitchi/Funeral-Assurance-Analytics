@@ -345,12 +345,16 @@ Only output valid SQLite commands. Do not write anything other than the JSON obj
 
     // 2. Execute SQL query securely
     let rows: any[] = [];
-    let sqlError = "";
     try {
       rows = await runQuery(sql);
     } catch (e: any) {
-      sqlError = e.message;
-      console.error("SQL Error executing Gemini generated query:", e);
+      console.error("SQL Error executing Gemini generated query, invoking fallback:", e);
+      try {
+        const fallbackResult = await handleQueryFallback(prompt, e);
+        return res.json(fallbackResult);
+      } catch (fallbackErr: any) {
+        return res.status(500).json({ error: `Query and fallback failed: ${fallbackErr.message}. Original error: ${e.message}` });
+      }
     }
 
     // 3. Narrative generation grounded on results
@@ -375,7 +379,7 @@ Strict Response Rules:
       question: prompt,
       attempted_sql: sql,
       query_results: rows,
-      error_if_any: sqlError
+      error_if_any: ""
     };
 
     const geminiInterpretationResponse = await ai.models.generateContent({
@@ -389,7 +393,7 @@ Strict Response Rules:
     res.json({
       sql,
       rows,
-      error: sqlError,
+      error: "",
       narrative: geminiInterpretationResponse.text || "Could not analyze database results.",
       explanation
     });

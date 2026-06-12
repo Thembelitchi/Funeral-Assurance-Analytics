@@ -4,6 +4,38 @@ This guide is compiled for enterprise Group Risk Managers, ICT Directors, and Da
 
 Currently, this application runs on a high-performance in-memory and local SQLite star-schema representation populated with simulated actuary-approved records (8,000 policies across KwaZulu-Natal). This document provides step-by-step technical blueprints to map and route live operational databases to the visual analytics, text-to-SQL translator, and graph-theoretic forensic engine.
 
+## 🖼️ Visual Tour & System Screenshots
+
+To assist visual inspection and illustrate the advanced forensic workflows, these are the system screens provided as part of the operational portal. If hosting on a public or private repository (e.g., GitHub Core Repo), save your uploaded screenshots under the `/assets/` directory named exactly as indicated below to display them beautifully in your repository:
+
+### 1. Actuarial Executive Dashboard (`assets/dashboard_overview.png`)
+*An all-in-one diagnostic view tracking major KZN key performance indicators (KPIs) in high fidelity.*
+*   **Strategic Metrics**: Highlights **6,581 Active Policies**, **R29.7m Annualized Premium In-Force**, and **82.8% Book Persistency** using deep charcoal off-white typography pairings.
+*   **Segmented Control Navigation**: Side-panel tabs direct users smoothly from text-to-SQL playgrounds to active fraud graph forensic states.
+*   *File naming*: Save this screenshot as `/assets/dashboard_overview.png` in your repository.
+<!-- ![Dashboard Overview](assets/dashboard_overview.png) -->
+
+### 2. KZN Operations & Product Lapse Analysis (`assets/kzn_operations.png`)
+*Detailed insights flagging high-risk areas and regional exposure.*
+*   **Concentration Warn Guard**: Calls out the critical **Community Group Lapses** rate of **15.2%** (representing **3.7x worst** than portfolio baseline averages) with **R1.7m Annualized Premium** representing revenue at risk.
+*   **Interactive Choropleth Analytics**: Maps regional metric spreads tracking policy densities in eThekwini Metro, Amajuba, and iLembe districts.
+*   *File naming*: Save this screenshot as `/assets/kzn_operations.png` in your repository.
+<!-- ![KZN Operations](assets/kzn_operations.png) -->
+
+### 3. Interactive Collusive Fraud Graph (`assets/fraud_graph.png`)
+*Real-time interactive D3-force network plotting complex syndicate relationships.*
+*   **Suspect Clusters**: Classifies and visualizes fraud rings like the *Durban Medical Certification Ring* and *KwaMashu Nedbank Mule Circle*.
+*   **Multi-hop Forensic Canvas**: Employs interactive node-link relationships representing Doctors, Bank Accounts, Claims, and Agents with drag-forces for deep investigation.
+*   *File naming*: Save this screenshot as `/assets/fraud_graph.png` in your repository.
+<!-- ![Interactive Fraud Graph](assets/fraud_graph.png) -->
+
+### 4. Graph Forensic Intelligence Board (`assets/graph_report.png`)
+*AI-summarized pattern breakdowns accompanied by actual Cypher matching logic.*
+*   **Cognitive Insight Synthesis**: Automatic generation matching the exact attack vector details on multi-party graph networks.
+*   **Instant Query Translation**: Live Cypher script outputs ready to copy and run inside a Neo4j enterprise terminal.
+*   *File naming*: Save this screenshot as `/assets/graph_report.png` in your repository.
+<!-- ![Graph Report Details](assets/graph_report.png) -->
+
 ---
 
 ## 🗺️ Architectural Topology & Star Schema
@@ -96,6 +128,133 @@ The visual telemetry, executive briefing, and translation models read from an op
 *   `cause_of_death` (TEXT): Diagnostic classifications (e.g., Cardiovascular, Respiratory).
 *   `approval_status` (VARCHAR): Processing outcomes (`Approved`, `Rejected`, `Hold-Investigate`).
 *   `days_to_settlement` (INTEGER): Turnaround time (TAT) interval in days.
+
+---
+
+## 🕸️ Graph-Powered Forensics (Neo4j Integration)
+
+While standard actuarial reporting benefits from relational star schemas, **collusive fraud detection is natively graph-powered**. Relational joins scale exponentially in complexity and computational cost when auditing multi-hop connections (e.g., investigating if a claimant's doctor shares a bank account or phone number with a writing broker).
+
+This system simulates a high-performance **index-free adjacency** model represented by a digital twin in **Neo4j AuraDB** or **Amazon Neptune**. 
+
+### 1. Unified Graph Ontology (Labeled Property Graph)
+In the production graph store, the relational keys are transformed into first-class nodes and structural relationships:
+
+```
+ (:Agent {id, name, fsp_no})
+      │
+   [:SOLD]
+      ▼
+ (:Policy {id, monthly_premium}) ──[:HAS_CLAIM]──► (:Claim {id, amount})
+      │                                                │
+   [:PAID_TO]                                      [:CERTIFIED_BY]
+      ▼                                                ▼
+ (:BankAccount {account_no, bank})               (:Practitioner {hpcsa_no, name})
+```
+
+### 2. Cypher Pattern Matching
+Relational databases require 5-way SQL joins to uncover a collusive doctor-broker collar. In Neo4j, this is matched instantly using standard **Cypher**:
+
+```cypher
+// Cypher Query: Uncover Doctor-Broker collusion collars
+MATCH (doc:Practitioner)-[:CERTIFIED_BY]-(c:Claim)-[:HAS_CLAIM]-(p:Policy)-[:SOLD]-(a:Agent)
+WITH doc, a, collect(p) as policies, sum(c.amount) as total_exposure
+WHERE size(policies) >= 3
+RETURN doc.name AS doctor, a.name AS broker, size(policies) AS case_volume, total_exposure
+ORDER BY total_exposure DESC
+```
+
+---
+
+## 🛠️ Multi-Language Data Pipeline Stack (Python, Cypher & PL/pgSQL)
+
+A complete production implementation blends multiple languages to manage ingestion, graph projections, and database synchronization.
+
+### 1. Ingestion & Graph Synchronization (Python & Apache Spark)
+We utilize **Python 3.10+** for automated ETL tasks. Python acts as the glue to pull core life insurance transaction lines from traditional COBOL or Delphi mainframes, structure them, and bulk-load them into Neo4j using the official `neo4j` driver.
+
+Below is an operational production-blueprint script in Python:
+
+```python
+# sync_records_to_graph.py
+import os
+import sys
+from neo4j import GraphDatabase
+import psycopg2
+
+def sync_active_claims():
+    # PostgreSQL Source Connect
+    pg_conn = psycopg2.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        database=os.getenv("DB_NAME", "funeral_warehouse"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
+    )
+    
+    # Neo4j Target Connect
+    neo4j_uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    neo4j_user = os.getenv("NEO4J_USER", "neo4j")
+    neo4j_pass = os.getenv("NEO4J_PASSWORD", "password")
+    graph_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_pass))
+    
+    sql_query = """
+        SELECT c.claim_id, c.claim_amount, p.policy_id, p.agent_key, c.cause_of_death
+        FROM fact_claim c
+        JOIN fact_policy p ON c.policy_key = p.policy_id
+        WHERE c.approval_status = 'Hold-Investigate';
+    """
+    
+    with pg_conn.cursor() as cursor:
+        cursor.execute(sql_query)
+        claims = cursor.fetchall()
+        
+    # Write nodes and edges to Neo4j Graph
+    with graph_driver.session() as session:
+        for claim_id, amount, policy_id, agent_key, cause_of_death in claims:
+            session.run("""
+                MERGE (p:Policy {id: $policy_id})
+                MERGE (a:Agent {id: $agent_id})
+                MERGE (c:Claim {id: $claim_id})
+                SET c.amount = $amount, c.cause = $cause
+                MERGE (p)-[:SOLD_BY]->(a)
+                MERGE (p)-[:HAS_CLAIM]->(c)
+            """, policy_id=policy_id, agent_id=agent_key, claim_id=claim_id, amount=amount, cause=cause_of_death)
+            
+    print(f"Successfully synced {len(claims)} suspicious claim-legs into Neo4j AuraDB.")
+    pg_conn.close()
+    graph_driver.close()
+
+if __name__ == "__main__":
+    sync_active_claims()
+```
+
+### 2. Database Triggers (PL/pgSQL)
+We use procedural **PL/pgSQL** on PostgreSQL to automatically maintain months on books, trigger late-payment warnings, and mark policies as `Lapsed` or `Cancelled` the millisecond consecutive debit orders bounce:
+
+```sql
+CREATE OR REPLACE FUNCTION process_installment_bounce() 
+RETURNS TRIGGER AS $$
+DECLARE
+    consecutive_bounces INT;
+BEGIN
+    -- Query recent premium payment history
+    SELECT count(*) INTO consecutive_bounces 
+    FROM fact_premium 
+    WHERE policy_key = NEW.policy_key 
+      AND status = 'Unpaid'
+      AND record_date >= CURRENT_DATE - INTERVAL '90 days';
+
+    -- Enforce automatic lapse after 3 bounced debit orders (industry-standard grace period)
+    IF consecutive_bounces >= 3 THEN
+        UPDATE fact_policy 
+        SET status = 'Lapsed', lapse_date = CURRENT_DATE::text
+        WHERE policy_id = NEW.policy_key;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+```
 
 ---
 
